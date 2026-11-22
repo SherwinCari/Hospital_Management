@@ -19,6 +19,7 @@ namespace OOP_Hospital_Schedule_Management
                 {
                     _connectionString =
                         @"Data Source=(LocalDB)\MSSQLLocalDB;" +
+                        "Initial Catalog=Database1;" +
                         "AttachDbFilename=" + FindDatabaseFile() + ";" +
                         "Integrated Security=True;Encrypt=False";
                 }
