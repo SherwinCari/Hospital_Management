@@ -1,4 +1,4 @@
-﻿namespace OOP_Hospital_Schedule_Management
+﻿namespace OOP_Hospital_Schedule_Management.staff_tab
 {
     partial class staff_main_ui
     {
@@ -26,24 +26,28 @@
             this.registerBtn.Size = new System.Drawing.Size(360, 60);
             this.registerBtn.Text = "Register new patients";
             this.registerBtn.UseVisualStyleBackColor = true;
+            this.registerBtn.Click += new System.EventHandler(this.registerBtn_Click);
 
             this.searchBtn.Location = new System.Drawing.Point(60, 110);
             this.searchBtn.Name = "searchBtn";
             this.searchBtn.Size = new System.Drawing.Size(360, 60);
             this.searchBtn.Text = "Search existing patients";
             this.searchBtn.UseVisualStyleBackColor = true;
+            this.searchBtn.Click += new System.EventHandler(this.searchBtn_Click);
 
             this.scheduleBtn.Location = new System.Drawing.Point(60, 190);
             this.scheduleBtn.Name = "scheduleBtn";
             this.scheduleBtn.Size = new System.Drawing.Size(360, 60);
             this.scheduleBtn.Text = "View and manage schedules";
             this.scheduleBtn.UseVisualStyleBackColor = true;
+            this.scheduleBtn.Click += new System.EventHandler(this.scheduleBtn_Click);
 
             this.requestBtn.Location = new System.Drawing.Point(60, 270);
             this.requestBtn.Name = "requestBtn";
             this.requestBtn.Size = new System.Drawing.Size(360, 60);
-            this.requestBtn.Text = "Submit and track requests";
+            this.requestBtn.Text = "Submit and track appointment request";
             this.requestBtn.UseVisualStyleBackColor = true;
+            this.requestBtn.Click += new System.EventHandler(this.requestBtn_Click);
 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

@@ -2,5 +2,5 @@
 bin/
 obj/
 
-*.mdf
+
 *.ldf
