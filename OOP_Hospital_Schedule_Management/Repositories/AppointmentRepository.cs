@@ -142,7 +142,7 @@ public sealed class AppointmentRepository
             WHERE (doctor_id = @doctor OR patient_id = @patient)
               AND appointment_date = @date
               AND appointment_time = @time
-              AND status <> 'Cancelled'
+              AND status IN ('Scheduled', 'Checked-in', 'Completed')
               AND (@id IS NULL OR appointment_id <> @id)";
         using var command = new SqlCommand(sql, connection, transaction);
         AddAppointmentParameters(command, request);
