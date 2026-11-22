@@ -1,4 +1,4 @@
-# MediQueue: Hospital Schedule Management
+﻿# MediQueue: Hospital Schedule Management
 
 A Windows Forms hospital appointment system built with C# and SQL Server LocalDB (BSIT 1-P, OOP project).
 
@@ -21,19 +21,13 @@ cd Hospital_Management
 
 Then open `OOP_Hospital_Schedule_Management.slnx` in Visual Studio.
 
-## 2. Set up your own local database (important)
+## 2. Database setup
 
-The database files (`*.mdf` and `*.ldf`) are **not stored in Git**. They are binary files that cannot be merged and are locked while Visual Studio is open. Every member builds their own copy from the SQL script instead, so everyone ends up with the same tables and sample data.
+The app uses a private SQL Server LocalDB database named `MediQueue` for the current Windows user. On first launch, it creates that database and initializes it with `OOP_Hospital_Schedule_Management/database/mediqueue_setup.sql`.
 
-1. In Solution Explorer, right-click the `database` folder, then **Add → New Item → Service-based Database**. Name it `Database1.mdf`. (If the file already exists in your folder, skip this.)
-2. Open **View → Server Explorer** (or SQL Server Object Explorer).
-3. Expand **Data Connections**, right-click `Database1.mdf`, and choose **New Query**.
-4. Open `database/mediqueue_setup.sql`, copy everything, paste it into the query window, and click **Execute**.
-5. Refresh the connection. You should see the tables `Users`, `Departments`, `Doctors`, `Patients`, `DoctorAvailability`, `Appointments`, `Vitals`, `MedicalRecords`, and the view `vw_PatientVisitHistory`.
+You need Visual Studio's **Data storage and processing** workload (which installs LocalDB). You do not need to create or attach `Database1.mdf`, execute SQL manually, or edit a connection string. The old `Database1.mdf` and `Database1_log.ldf` files are not used by the app.
 
-The script drops and recreates everything, so you can re-run it any time to reset your data.
-
-If the script is changed by someone else, pull the update and run it again.
+The setup script contains sample accounts and records. It drops and recreates tables, but the app runs it only when creating a new `MediQueue` database. Existing databases with an incomplete schema are left untouched and reported as an error.
 
 ### Test logins
 
@@ -50,13 +44,12 @@ All accounts use the password `1234` (testing only).
 
 ```
 OOP_Hospital_Schedule_Management
-├── database/       mediqueue_setup.sql (shared), Database1.mdf (local only)
-├── models/         Patient, CheckupRecord, Vitals, Appointment, Doctor, Department
-├── data/           DbConnection, PatientRepository, AppointmentRepository, DoctorRepository
-├── helpers/        CurrentUser (logged-in user session)
-├── staff_tab/      staff_main_ui and staff forms
-├── doctor_tab/     doctor_main_ui and doctor forms
-└── main_ui         Login screen
+├── Controllers/    PatientController, ScheduleController
+├── Data/           Db (per-user LocalDB initialization)
+├── Models/         Person, Patient, Doctor, AppointmentScheduleRequest
+├── Repositories/   PatientRepository, AppointmentRepository
+├── Views/          Main, Patients, Staff, Doctor WinForms
+└── database/       mediqueue_setup.sql
 ```
 
 ## 4. Code rules

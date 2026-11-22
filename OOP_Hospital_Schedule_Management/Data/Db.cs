@@ -1,57 +1,126 @@
-﻿using Microsoft.Data.SqlClient;
-using System;
+using Microsoft.Data.SqlClient;
+using System.Data;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace OOP_Hospital_Schedule_Management
 {
-    // Same class name and GetConnection() as before, so no other file has to change.
-    // The difference: it finds database\Database1.mdf by itself, so nobody has to
-    // type their own C:\ path here (and nobody commits a personal path by mistake).
+    /// <summary>
+    /// Connects to a per-Windows-user LocalDB database. On first launch, creates
+    /// the database and loads the checked-in setup script. No MDF path is required.
+    /// </summary>
     public static class Db
     {
-        private static string _connectionString;
+        private const string DatabaseName = "MediQueue";
+        private static readonly object InitializationLock = new();
+        private static volatile bool _initialized;
 
-        public static string ConnectionString
+        public static string ConnectionString { get; } = new SqlConnectionStringBuilder
         {
-            get
-            {
-                if (_connectionString == null)
-                {
-                    _connectionString =
-                        @"Data Source=(LocalDB)\MSSQLLocalDB;" +
-                        "Initial Catalog=Database1;" +
-                        "AttachDbFilename=" + FindDatabaseFile() + ";" +
-                        "Integrated Security=True;Encrypt=False";
-                }
-                return _connectionString;
-            }
-        }
+            DataSource = @"(LocalDB)\MSSQLLocalDB",
+            InitialCatalog = DatabaseName,
+            IntegratedSecurity = true,
+            Encrypt = false,
+            ConnectTimeout = 30
+        }.ConnectionString;
 
         public static SqlConnection GetConnection()
         {
+            EnsureDatabaseReady();
             return new SqlConnection(ConnectionString);
         }
 
-        // Walks up from the .exe folder (bin\Debug\net10.0-windows) until it finds database\Database1.mdf
-        private static string FindDatabaseFile()
+        private static void EnsureDatabaseReady()
         {
-            string dir = AppDomain.CurrentDomain.BaseDirectory;
+            if (_initialized) return;
 
-            for (int i = 0; i < 8 && !string.IsNullOrEmpty(dir); i++)
+            lock (InitializationLock)
             {
-                string candidate = Path.Combine(dir, "database", "Database1.mdf");
-                if (File.Exists(candidate))
+                if (_initialized) return;
+
+                bool created = EnsureDatabaseExists();
+                bool schemaReady = HasApplicationSchema();
+
+                if (!schemaReady)
                 {
-                    return candidate;
+                    if (!created)
+                    {
+                        throw new InvalidOperationException(
+                            $"The LocalDB database '{DatabaseName}' exists but is missing the MediQueue schema. " +
+                            "Back up any data, then remove or rename that database and restart the app to initialize a fresh one.");
+                    }
+
+                    InitializeSchema();
+                    if (!HasApplicationSchema())
+                        throw new InvalidOperationException("The MediQueue setup script ran, but required tables were not created.");
                 }
 
-                DirectoryInfo parent = Directory.GetParent(dir.TrimEnd(Path.DirectorySeparatorChar));
-                dir = parent == null ? null : parent.FullName;
+                _initialized = true;
+            }
+        }
+
+        private static bool EnsureDatabaseExists()
+        {
+            var masterBuilder = new SqlConnectionStringBuilder(ConnectionString)
+            {
+                InitialCatalog = "master"
+            };
+
+            using var connection = new SqlConnection(masterBuilder.ConnectionString);
+            connection.Open();
+
+            using (var check = new SqlCommand("SELECT DB_ID(@databaseName)", connection))
+            {
+                check.Parameters.Add("@databaseName", SqlDbType.NVarChar, 128).Value = DatabaseName;
+                object? databaseId = check.ExecuteScalar();
+                if (databaseId is not null && databaseId != DBNull.Value)
+                    return false;
             }
 
-            throw new FileNotFoundException(
-                "Could not find database\\Database1.mdf. Create it in the 'database' folder " +
-                "and run database\\mediqueue_setup.sql.");
+            using var create = new SqlCommand("CREATE DATABASE [MediQueue]", connection);
+            create.ExecuteNonQuery();
+            return true;
+        }
+
+        private static bool HasApplicationSchema()
+        {
+            using var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            const string sql = @"
+                SELECT CASE WHEN OBJECT_ID('dbo.Users', 'U') IS NOT NULL
+                                  AND OBJECT_ID('dbo.Appointments', 'U') IS NOT NULL
+                                  AND OBJECT_ID('dbo.Patients', 'U') IS NOT NULL
+                                  AND OBJECT_ID('dbo.vw_PatientVisitHistory', 'V') IS NOT NULL
+                            THEN 1 ELSE 0 END";
+            using var command = new SqlCommand(sql, connection);
+            return Convert.ToInt32(command.ExecuteScalar()) == 1;
+        }
+
+        private static void InitializeSchema()
+        {
+            string scriptPath = Path.Combine(AppContext.BaseDirectory, "database", "mediqueue_setup.sql");
+            if (!File.Exists(scriptPath))
+            {
+                throw new FileNotFoundException(
+                    "The MediQueue setup script was not found beside the application. Rebuild the project so it is copied to the output folder.",
+                    scriptPath);
+            }
+
+            string script = File.ReadAllText(scriptPath);
+            string[] batches = Regex.Split(script, @"^\s*GO\s*(?:--.*)?\s*$",
+                RegexOptions.Multiline | RegexOptions.IgnoreCase);
+
+            using var connection = new SqlConnection(ConnectionString);
+            connection.Open();
+            foreach (string batch in batches)
+            {
+                if (string.IsNullOrWhiteSpace(batch)) continue;
+                using var command = new SqlCommand(batch, connection)
+                {
+                    CommandTimeout = 120
+                };
+                command.ExecuteNonQuery();
+            }
         }
     }
 }

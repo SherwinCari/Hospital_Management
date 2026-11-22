@@ -1,7 +1,6 @@
 -- =====================================================
--- MediQueue - Database setup script (SQL Server / LocalDB)  v3
--- Run this against Database1.mdf (Server Explorer >
--- right-click the database > New Query > paste > Execute)
+-- MediQueue - Database setup script (SQL Server / LocalDB) v3
+-- The application runs this once when it creates a new per-user MediQueue database.
 -- WARNING: this resets the application's tables and deletes their existing data.
 -- Back up the database before running this script against a database you need.
 -- =====================================================
