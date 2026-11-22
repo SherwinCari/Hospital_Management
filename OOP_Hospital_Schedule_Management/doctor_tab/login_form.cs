@@ -42,12 +42,13 @@ namespace OOP_Hospital_Schedule_Management.doctor_tab
                     {
                         if (reader.Read())
                         {
-                            int doctorId = reader.GetInt32(0);
-                            string doctorName = reader.GetString(1);
-                            int departmentId = reader.GetInt32(2);
-                            string departmentName = reader.GetString(3);
+                            Doctor doctor = new Doctor(
+                                reader.GetInt32(0),    // doctor_id
+                                reader.GetString(1),   // full_name
+                                reader.GetInt32(2),    // department_id
+                                reader.GetString(3));  // department_name
 
-                            doctor_main_ui doctorForm = new doctor_main_ui(doctorId, doctorName, departmentId, departmentName);
+                            doctor_main_ui doctorForm = new doctor_main_ui(doctor);
                             doctorForm.FormClosed += (s, args) => this.Close();
                             doctorForm.Show();
                             this.Hide();

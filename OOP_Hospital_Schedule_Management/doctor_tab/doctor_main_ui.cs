@@ -12,13 +12,13 @@ namespace OOP_Hospital_Schedule_Management
         private readonly int _departmentId;
         private readonly string _departmentName;
 
-        public doctor_main_ui(int doctorId, string doctorName, int departmentId, string departmentName)
+        public doctor_main_ui(Doctor doctor)
         {
             InitializeComponent();
-            _doctorId = doctorId;
-            _doctorName = doctorName;
-            _departmentId = departmentId;
-            _departmentName = departmentName;
+            _doctorId = doctor.DoctorId;
+            _doctorName = doctor.FullName;
+            _departmentId = doctor.DepartmentId;
+            _departmentName = doctor.DepartmentName;
 
             welcomeLbl.Text = "Welcome, " + _doctorName + " - " + _departmentName;
             scheduledLbl.Text = _departmentName + " Patients (returning)";
