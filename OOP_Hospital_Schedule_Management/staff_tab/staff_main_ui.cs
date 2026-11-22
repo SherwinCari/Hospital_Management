@@ -34,7 +34,10 @@ namespace OOP_Hospital_Schedule_Management.staff_tab
 
         private void scheduleBtn_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Coming soon.");
+            using (schedules_form form = new schedules_form())
+            {
+                form.ShowDialog(this);
+            }
         }
 
         private void requestBtn_Click(object sender, EventArgs e)
