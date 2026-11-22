@@ -30,7 +30,7 @@ namespace OOP_Hospital_Schedule_Management
             datePicker.Value = DateTime.Today;
             LoadTables();
 
-            // reload whenever you switch back to this window (e.g. after staff registers a patient)
+            // reload whenever you switch back to this window
             this.Activated += (s, e) => LoadTables();
         }
 
@@ -66,11 +66,12 @@ namespace OOP_Hospital_Schedule_Management
 
         private void LoadTables()
         {
-            string statusCase = @"CASE a.status
-                                      WHEN 'Scheduled'  THEN 'Not yet here'
-                                      WHEN 'Checked-in' THEN 'Checked-in'
-                                      WHEN 'Completed'  THEN 'Completed'
-                                      WHEN 'Cancelled'  THEN 'Cancelled'
+            string statusCase = @"CASE
+                                      WHEN a.status = 'Scheduled' AND a.doctor_id IS NULL THEN 'Waiting for doctor'
+                                      WHEN a.status = 'Scheduled'  THEN 'Not yet here'
+                                      WHEN a.status = 'Checked-in' THEN 'Checked-in'
+                                      WHEN a.status = 'Completed'  THEN 'Completed'
+                                      WHEN a.status = 'Cancelled'  THEN 'Cancelled'
                                   END";
 
             // Table 1: RETURNING patients = has a record from a different appointment
@@ -80,10 +81,10 @@ namespace OOP_Hospital_Schedule_Management
                        CONVERT(VARCHAR(5), a.appointment_time, 108) AS [Time],
                        " + statusCase + @" AS [Status],
                        a.queue_number AS [Queue #],
-                       d.full_name AS [Doctor]
+                       ISNULL(d.full_name, '-') AS [Doctor]
                 FROM Appointments a
                 JOIN Patients p ON a.patient_id = p.patient_id
-                JOIN Doctors d ON a.doctor_id = d.doctor_id
+                LEFT JOIN Doctors d ON a.doctor_id = d.doctor_id
                 WHERE a.department_id = @departmentId
                   AND a.appointment_date = @date
                   AND a.status IN ('Scheduled', 'Checked-in', 'Completed', 'Cancelled')
@@ -98,7 +99,7 @@ namespace OOP_Hospital_Schedule_Management
 
             // Table 2: NEW patients
             //   (A) appointments of patients with no record from another appointment
-            //   (B) patients registered in this department on the selected date with no appointment yet
+            //   (B) patients registered today with no appointment at all (older test data)
             string newSql = @"
                 SELECT * FROM (
                     SELECT a.appointment_id, p.patient_id,
@@ -106,10 +107,10 @@ namespace OOP_Hospital_Schedule_Management
                            CONVERT(VARCHAR(5), a.appointment_time, 108) AS [Time],
                            " + statusCase + @" AS [Status],
                            a.queue_number AS [Queue #],
-                           d.full_name AS [Doctor]
+                           ISNULL(d.full_name, '-') AS [Doctor]
                     FROM Appointments a
                     JOIN Patients p ON a.patient_id = p.patient_id
-                    JOIN Doctors d ON a.doctor_id = d.doctor_id
+                    LEFT JOIN Doctors d ON a.doctor_id = d.doctor_id
                     WHERE a.department_id = @departmentId
                       AND a.appointment_date = @date
                       AND a.status IN ('Scheduled', 'Checked-in', 'Completed', 'Cancelled')

@@ -25,6 +25,7 @@
             historyGrid = new DataGridView();
             recordBtn = new Button();
             closeBtn = new Button();
+            startBtn = new Button();
             ((System.ComponentModel.ISupportInitialize)historyGrid).BeginInit();
             SuspendLayout();
             // 
@@ -117,6 +118,17 @@
             recordBtn.UseVisualStyleBackColor = true;
             recordBtn.Click += recordBtn_Click;
             // 
+            // startBtn
+            // 
+            startBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            startBtn.Location = new Point(260, 615);
+            startBtn.Name = "startBtn";
+            startBtn.Size = new Size(220, 48);
+            startBtn.TabIndex = 3;
+            startBtn.Text = "Start check-up";
+            startBtn.UseVisualStyleBackColor = true;
+            startBtn.Click += startBtn_Click;
+            // 
             // closeBtn
             // 
             closeBtn.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
@@ -143,6 +155,7 @@
             Controls.Add(historyGrid);
             Controls.Add(recordBtn);
             Controls.Add(closeBtn);
+            Controls.Add(startBtn);
             Name = "patient_detail_form";
             StartPosition = FormStartPosition.CenterParent;
             Text = "Patient";
@@ -162,5 +175,6 @@
         private DataGridView historyGrid;
         private Button recordBtn;
         private Button closeBtn;
+        private Button startBtn;
     }
 }

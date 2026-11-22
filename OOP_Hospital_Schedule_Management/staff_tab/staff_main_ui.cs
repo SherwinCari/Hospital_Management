@@ -18,7 +18,7 @@ namespace OOP_Hospital_Schedule_Management.staff_tab
 
         private void registerBtn_Click(object sender, EventArgs e)
         {
-            using (register_patient_form form = new register_patient_form())
+            using (register_patient_form form = new register_patient_form(_userId))
             {
                 form.ShowDialog(this);
             }
