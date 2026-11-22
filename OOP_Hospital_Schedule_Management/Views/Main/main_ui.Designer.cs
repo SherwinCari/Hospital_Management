@@ -30,66 +30,101 @@
         {
             doctorBtn = new Button();
             staffBtn = new Button();
-            flowLayoutPanel1 = new FlowLayoutPanel();
-            flowLayoutPanel2 = new FlowLayoutPanel();
-            flowLayoutPanel2.SuspendLayout();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
             SuspendLayout();
-            // 
+            //
             // doctorBtn
-            // 
-            doctorBtn.Location = new Point(19, 13);
+            //
+            doctorBtn.BackColor = Color.Transparent;
+            doctorBtn.BackgroundImage = Properties.Resources._6;
+            doctorBtn.BackgroundImageLayout = ImageLayout.Zoom;
+            doctorBtn.FlatAppearance.BorderSize = 0;
+            doctorBtn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            doctorBtn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            doctorBtn.FlatStyle = FlatStyle.Flat;
+            doctorBtn.ForeColor = Color.Transparent;
+            doctorBtn.Location = new Point(85, 84);
+            doctorBtn.Margin = new Padding(2);
             doctorBtn.Name = "doctorBtn";
-            doctorBtn.Size = new Size(276, 114);
+            doctorBtn.Size = new Size(165, 161);
             doctorBtn.TabIndex = 0;
-            doctorBtn.Text = "DOCTOR";
-            doctorBtn.UseVisualStyleBackColor = true;
+            doctorBtn.UseVisualStyleBackColor = false;
             doctorBtn.Click += doctorBtn_Click;
-            // 
+            //
             // staffBtn
-            // 
-            staffBtn.Location = new Point(301, 13);
+            //
+            staffBtn.BackColor = Color.Transparent;
+            staffBtn.BackgroundImage = Properties.Resources._5;
+            staffBtn.BackgroundImageLayout = ImageLayout.Stretch;
+            staffBtn.FlatAppearance.BorderSize = 0;
+            staffBtn.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            staffBtn.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            staffBtn.FlatStyle = FlatStyle.Flat;
+            staffBtn.ForeColor = Color.Transparent;
+            staffBtn.Location = new Point(271, 84);
+            staffBtn.Margin = new Padding(2);
             staffBtn.Name = "staffBtn";
-            staffBtn.Size = new Size(276, 114);
+            staffBtn.Size = new Size(165, 161);
             staffBtn.TabIndex = 1;
-            staffBtn.Text = "STAFF";
-            staffBtn.UseVisualStyleBackColor = true;
+            staffBtn.UseVisualStyleBackColor = false;
             staffBtn.Click += staffBtn_Click;
-            // 
-            // flowLayoutPanel1
-            // 
-            flowLayoutPanel1.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel1.BorderStyle = BorderStyle.FixedSingle;
-            flowLayoutPanel1.Location = new Point(13, 13);
-            flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(0, 0);
-            flowLayoutPanel1.TabIndex = 2;
-            flowLayoutPanel1.WrapContents = false;
-            // 
-            // flowLayoutPanel2
-            // 
-            flowLayoutPanel2.Anchor = AnchorStyles.None;
-            flowLayoutPanel2.AutoSize = true;
-            flowLayoutPanel2.AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            flowLayoutPanel2.Controls.Add(flowLayoutPanel1);
-            flowLayoutPanel2.Controls.Add(doctorBtn);
-            flowLayoutPanel2.Controls.Add(staffBtn);
-            flowLayoutPanel2.Location = new Point(231, 166);
-            flowLayoutPanel2.Margin = new Padding(20);
-            flowLayoutPanel2.Name = "flowLayoutPanel2";
-            flowLayoutPanel2.Padding = new Padding(10);
-            flowLayoutPanel2.Size = new Size(590, 140);
-            flowLayoutPanel2.TabIndex = 3;
-            flowLayoutPanel2.WrapContents = false;
-            // 
+            //
+            // label1
+            //
+            label1.AutoSize = true;
+            label1.BackColor = Color.Transparent;
+            label1.Font = new Font("Consolas", 10F, FontStyle.Bold);
+            label1.ForeColor = Color.DarkCyan;
+            label1.Location = new Point(140, 247);
+            label1.Name = "label1";
+            label1.Size = new Size(56, 17);
+            label1.TabIndex = 2;
+            label1.Text = "DOCTOR";
+            //
+            // label2
+            //
+            label2.AutoSize = true;
+            label2.BackColor = Color.Transparent;
+            label2.Font = new Font("Consolas", 10F, FontStyle.Bold);
+            label2.ForeColor = Color.DarkCyan;
+            label2.Location = new Point(333, 247);
+            label2.Name = "label2";
+            label2.Size = new Size(48, 17);
+            label2.TabIndex = 2;
+            label2.Text = "STAFF";
+            //
+            // label3
+            //
+            label3.AutoSize = true;
+            label3.BackColor = Color.Transparent;
+            label3.Font = new Font("Airnt", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            label3.ForeColor = Color.Teal;
+            label3.Location = new Point(42, 44);
+            label3.Name = "label3";
+            label3.Size = new Size(456, 19);
+            label3.TabIndex = 2;
+            label3.Text = "SELECT YOUR ROLE TO CONTINUE";
+            //
             // main_ui
-            // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            //
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1029, 506);
-            Controls.Add(flowLayoutPanel2);
+            BackgroundImage = Properties.Resources.BG1;
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(537, 320);
+            Controls.Add(label2);
+            Controls.Add(label3);
+            Controls.Add(label1);
+            Controls.Add(staffBtn);
+            Controls.Add(doctorBtn);
+            DoubleBuffered = true;
+            FormBorderStyle = FormBorderStyle.FixedSingle;
+            Margin = new Padding(2);
             Name = "main_ui";
+            StartPosition = FormStartPosition.CenterScreen;
             Text = "Main UI";
-            flowLayoutPanel2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -98,7 +133,8 @@
 
         private Button doctorBtn;
         private Button staffBtn;
-        private FlowLayoutPanel flowLayoutPanel1;
-        private FlowLayoutPanel flowLayoutPanel2;
+        private Label label1;
+        private Label label2;
+        private Label label3;
     }
 }

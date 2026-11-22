@@ -23,76 +23,97 @@
             loginBtn = new Button();
             errorLbl = new Label();
             SuspendLayout();
-            // 
+            //
             // titleLbl
-            // 
+            //
             titleLbl.AutoSize = true;
-            titleLbl.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
-            titleLbl.Location = new Point(110, 30);
+            titleLbl.BackColor = Color.Transparent;
+            titleLbl.Font = new Font("Airnt", 15.7499981F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            titleLbl.ForeColor = Color.Teal;
+            titleLbl.Location = new Point(45, 25);
+            titleLbl.Margin = new Padding(2, 0, 2, 0);
             titleLbl.Name = "titleLbl";
-            titleLbl.Size = new Size(183, 45);
+            titleLbl.Size = new Size(192, 21);
             titleLbl.TabIndex = 0;
             titleLbl.Text = "Staff Login";
             titleLbl.TextAlign = ContentAlignment.TopCenter;
-            // 
+            //
             // usernameLbl
-            // 
+            //
             usernameLbl.AutoSize = true;
-            usernameLbl.Location = new Point(50, 100);
+            usernameLbl.BackColor = Color.Transparent;
+            usernameLbl.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            usernameLbl.ForeColor = Color.Teal;
+            usernameLbl.Location = new Point(35, 67);
+            usernameLbl.Margin = new Padding(2, 0, 2, 0);
             usernameLbl.Name = "usernameLbl";
-            usernameLbl.Size = new Size(91, 25);
+            usernameLbl.Size = new Size(60, 15);
             usernameLbl.TabIndex = 1;
             usernameLbl.Text = "Username";
-            // 
+            //
             // passwordLbl
-            // 
+            //
             passwordLbl.AutoSize = true;
-            passwordLbl.Location = new Point(50, 180);
+            passwordLbl.BackColor = Color.Transparent;
+            passwordLbl.Font = new Font("Segoe UI Semibold", 9F, FontStyle.Bold);
+            passwordLbl.ForeColor = Color.Teal;
+            passwordLbl.Location = new Point(35, 115);
+            passwordLbl.Margin = new Padding(2, 0, 2, 0);
             passwordLbl.Name = "passwordLbl";
-            passwordLbl.Size = new Size(87, 25);
+            passwordLbl.Size = new Size(57, 15);
             passwordLbl.TabIndex = 2;
             passwordLbl.Text = "Password";
-            // 
+            //
             // usernameTxt
-            // 
-            usernameTxt.Location = new Point(50, 130);
+            //
+            usernameTxt.Location = new Point(35, 85);
+            usernameTxt.Margin = new Padding(2, 2, 2, 2);
             usernameTxt.Name = "usernameTxt";
-            usernameTxt.Size = new Size(300, 31);
+            usernameTxt.Size = new Size(211, 23);
             usernameTxt.TabIndex = 0;
-            // 
+            //
             // passwordTxt
-            // 
-            passwordTxt.Location = new Point(50, 210);
+            //
+            passwordTxt.Location = new Point(35, 133);
+            passwordTxt.Margin = new Padding(2, 2, 2, 2);
             passwordTxt.Name = "passwordTxt";
             passwordTxt.PasswordChar = '*';
-            passwordTxt.Size = new Size(300, 31);
+            passwordTxt.Size = new Size(211, 23);
             passwordTxt.TabIndex = 1;
-            // 
+            //
             // loginBtn
-            // 
-            loginBtn.Location = new Point(50, 295);
+            //
+            loginBtn.FlatAppearance.BorderSize = 0;
+            loginBtn.FlatStyle = FlatStyle.Flat;
+            loginBtn.ForeColor = Color.White;
+            loginBtn.Image = Properties.Resources.Button1;
+            loginBtn.Location = new Point(35, 177);
+            loginBtn.Margin = new Padding(2, 2, 2, 2);
             loginBtn.Name = "loginBtn";
-            loginBtn.Size = new Size(300, 50);
+            loginBtn.Size = new Size(210, 30);
             loginBtn.TabIndex = 2;
             loginBtn.Text = "Login";
             loginBtn.UseVisualStyleBackColor = true;
             loginBtn.Click += loginBtn_Click;
-            // 
+            //
             // errorLbl
-            // 
+            //
             errorLbl.AutoSize = true;
             errorLbl.ForeColor = Color.Firebrick;
-            errorLbl.Location = new Point(50, 255);
+            errorLbl.Location = new Point(35, 153);
+            errorLbl.Margin = new Padding(2, 0, 2, 0);
             errorLbl.Name = "errorLbl";
-            errorLbl.Size = new Size(0, 25);
+            errorLbl.Size = new Size(0, 15);
             errorLbl.TabIndex = 3;
-            // 
+            //
             // login_form
-            // 
+            //
             AcceptButton = loginBtn;
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(400, 380);
+            BackgroundImage = Properties.Resources.BG2;
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(280, 228);
             Controls.Add(titleLbl);
             Controls.Add(usernameLbl);
             Controls.Add(usernameTxt);
@@ -100,7 +121,9 @@
             Controls.Add(passwordTxt);
             Controls.Add(errorLbl);
             Controls.Add(loginBtn);
+            DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(2, 2, 2, 2);
             MaximizeBox = false;
             Name = "login_form";
             StartPosition = FormStartPosition.CenterScreen;
