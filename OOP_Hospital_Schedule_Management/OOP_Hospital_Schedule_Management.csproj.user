@@ -1,4 +1,35 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup />
+  <ItemGroup>
+    <Compile Update="Views\Doctor\doctor_main_ui.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Doctor\login_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Main\main_ui.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Patients\patient_detail_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Patients\record_history_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Staff\login_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Staff\registration_patient_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Staff\schedules_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Staff\search_patient_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Views\Staff\staff_main_ui.cs">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

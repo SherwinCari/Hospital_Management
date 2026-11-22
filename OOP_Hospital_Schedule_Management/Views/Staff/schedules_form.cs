@@ -1,21 +1,32 @@
-﻿using System.Data;
-using Microsoft.Data.SqlClient;
+using OOP_Hospital_Schedule_Management.Controllers;
+using OOP_Hospital_Schedule_Management.Models;
+using OOP_Hospital_Schedule_Management.Repositories;
 
 namespace OOP_Hospital_Schedule_Management
 {
     public partial class schedules_form : Form
     {
-        public schedules_form()
+        private readonly int _staffUserId;
+        private readonly ScheduleController _controller;
+
+        // Parameterless constructor supports the WinForms designer.
+        public schedules_form() : this(0, new ScheduleController(new AppointmentRepository())) { }
+
+        public schedules_form(int staffUserId, ScheduleController controller)
         {
             InitializeComponent();
+            _staffUserId = staffUserId;
+            _controller = controller;
 
             Load += (s, e) => { LoadCombos(); LoadSchedules(); };
             btnRefresh.Click += (s, e) => LoadSchedules();
             dtpDate.ValueChanged += (s, e) => LoadSchedules();
             btnAdd.Click += (s, e) => AddSchedule();
             btnUpdate.Click += (s, e) => UpdateSchedule();
-            btnDelete.Click += (s, e) => DeleteSchedule();
+            btnDelete.Click += (s, e) => CancelSchedule();
             dgvSchedules.SelectionChanged += (s, e) => FillInputs();
+            cmbStatus.Enabled = false; // Lifecycle status is changed by check-in/visit workflows.
+            btnDelete.Text = "Cancel";
         }
 
         private void LoadCombos()
@@ -26,23 +37,17 @@ namespace OOP_Hospital_Schedule_Management
                 cmbStatus.Items.AddRange(new object[] { "Scheduled", "Checked-in", "Completed", "Cancelled", "No-show" });
                 cmbStatus.SelectedIndex = 0;
 
-                using var conn = Db.GetConnection();
-
-                var patients = new DataTable();
-                new SqlDataAdapter("SELECT patient_id, full_name FROM Patients ORDER BY full_name", conn).Fill(patients);
                 cmbPatient.DisplayMember = "full_name";
                 cmbPatient.ValueMember = "patient_id";
-                cmbPatient.DataSource = patients;
+                cmbPatient.DataSource = _controller.GetPatients();
 
-                var doctors = new DataTable();
-                new SqlDataAdapter("SELECT doctor_id, full_name FROM Doctors ORDER BY full_name", conn).Fill(doctors);
                 cmbDoctor.DisplayMember = "full_name";
                 cmbDoctor.ValueMember = "doctor_id";
-                cmbDoctor.DataSource = doctors;
+                cmbDoctor.DataSource = _controller.GetDoctors();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading lists: " + ex.Message);
+                MessageBox.Show("Unable to load patient and doctor lists: " + ex.Message);
             }
         }
 
@@ -50,32 +55,13 @@ namespace OOP_Hospital_Schedule_Management
         {
             try
             {
-                using var conn = Db.GetConnection();
-                using var cmd = new SqlCommand(@"
-                    SELECT a.appointment_id AS ID,
-                           a.patient_id, a.doctor_id,
-                           p.full_name AS Patient,
-                           d.full_name AS Doctor,
-                           a.appointment_date AS [Date],
-                           a.appointment_time AS [Time],
-                           a.status AS Status
-                    FROM Appointments a
-                    JOIN Patients p ON a.patient_id = p.patient_id
-                    JOIN Doctors d ON a.doctor_id = d.doctor_id
-                    WHERE a.appointment_date = @date
-                    ORDER BY a.appointment_time", conn);
-                cmd.Parameters.AddWithValue("@date", dtpDate.Value.Date);
-
-                var dt = new DataTable();
-                new SqlDataAdapter(cmd).Fill(dt);
-                dgvSchedules.DataSource = dt;
-
+                dgvSchedules.DataSource = _controller.GetSchedules(dtpDate.Value.Date);
                 if (dgvSchedules.Columns.Contains("patient_id")) dgvSchedules.Columns["patient_id"].Visible = false;
                 if (dgvSchedules.Columns.Contains("doctor_id")) dgvSchedules.Columns["doctor_id"].Visible = false;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error loading schedules: " + ex.Message);
+                MessageBox.Show("Unable to load appointments: " + ex.Message);
             }
         }
 
@@ -86,117 +72,95 @@ namespace OOP_Hospital_Schedule_Management
             if (row.Cells["ID"].Value == null || row.Cells["ID"].Value == DBNull.Value) return;
 
             cmbPatient.SelectedValue = Convert.ToInt32(row.Cells["patient_id"].Value);
-            cmbDoctor.SelectedValue = Convert.ToInt32(row.Cells["doctor_id"].Value);
+            if (row.Cells["doctor_id"].Value == DBNull.Value)
+                cmbDoctor.SelectedIndex = -1;
+            else
+                cmbDoctor.SelectedValue = Convert.ToInt32(row.Cells["doctor_id"].Value);
             cmbStatus.SelectedItem = row.Cells["Status"].Value?.ToString();
-            if (row.Cells["Time"].Value is TimeSpan ts)
-                dtpTime.Value = DateTime.Today.Add(ts);
+            if (row.Cells["Time"].Value is TimeSpan time)
+                dtpTime.Value = DateTime.Today.Add(time);
         }
 
         private void AddSchedule()
         {
-            if (cmbPatient.SelectedValue == null || cmbDoctor.SelectedValue == null)
-            {
-                MessageBox.Show("Pumili ng patient at doctor.");
-                return;
-            }
-
             try
             {
-                using var conn = Db.GetConnection();
-                using var cmd = new SqlCommand(@"
-                    INSERT INTO Appointments
-                        (patient_id, department_id, doctor_id, created_by, appointment_date, appointment_time, status)
-                    SELECT @p, d.department_id, d.doctor_id,
-                           (SELECT TOP 1 user_id FROM Users WHERE role = 'Staff'),
-                           @date, @time, @status
-                    FROM Doctors d WHERE d.doctor_id = @d", conn);
-                cmd.Parameters.AddWithValue("@p", cmbPatient.SelectedValue);
-                cmd.Parameters.AddWithValue("@d", cmbDoctor.SelectedValue);
-                cmd.Parameters.AddWithValue("@date", dtpDate.Value.Date);
-                cmd.Parameters.AddWithValue("@time", dtpTime.Value.TimeOfDay);
-                cmd.Parameters.AddWithValue("@status", cmbStatus.Text);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                LoadSchedules();
-            }
-            catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
-            {
-                MessageBox.Show("May schedule na ang doctor sa oras na yan.");
+                ScheduleActionResult result = _controller.Create(BuildRequest(), _staffUserId);
+                ShowResult(result);
+                if (result.IsSuccess) LoadSchedules();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error adding schedule: " + ex.Message);
+                MessageBox.Show("Unable to schedule the appointment: " + ex.Message);
             }
         }
 
         private void UpdateSchedule()
         {
-            var row = dgvSchedules.CurrentRow;
-            if (row == null || row.Cells["ID"].Value == null || row.Cells["ID"].Value == DBNull.Value)
+            if (!TryGetSelectedAppointmentId(out int appointmentId))
             {
-                MessageBox.Show("Pumili muna ng schedule sa listahan.");
+                MessageBox.Show("Select an appointment first.");
                 return;
             }
-            int id = Convert.ToInt32(row.Cells["ID"].Value);
 
             try
             {
-                using var conn = Db.GetConnection();
-                using var cmd = new SqlCommand(@"
-                    UPDATE Appointments
-                    SET patient_id = @p,
-                        doctor_id = @d,
-                        department_id = (SELECT department_id FROM Doctors WHERE doctor_id = @d),
-                        appointment_date = @date,
-                        appointment_time = @time,
-                        status = @status
-                    WHERE appointment_id = @id", conn);
-                cmd.Parameters.AddWithValue("@p", cmbPatient.SelectedValue);
-                cmd.Parameters.AddWithValue("@d", cmbDoctor.SelectedValue);
-                cmd.Parameters.AddWithValue("@date", dtpDate.Value.Date);
-                cmd.Parameters.AddWithValue("@time", dtpTime.Value.TimeOfDay);
-                cmd.Parameters.AddWithValue("@status", cmbStatus.Text);
-                cmd.Parameters.AddWithValue("@id", id);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                LoadSchedules();
-            }
-            catch (SqlException ex) when (ex.Number == 2601 || ex.Number == 2627)
-            {
-                MessageBox.Show("May schedule na ang doctor sa oras na yan.");
+                ScheduleActionResult result = _controller.Reschedule(appointmentId, BuildRequest());
+                ShowResult(result);
+                if (result.IsSuccess) LoadSchedules();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error updating schedule: " + ex.Message);
+                MessageBox.Show("Unable to update the appointment: " + ex.Message);
             }
         }
 
-        private void DeleteSchedule()
+        private void CancelSchedule()
         {
-            var row = dgvSchedules.CurrentRow;
-            if (row == null || row.Cells["ID"].Value == null || row.Cells["ID"].Value == DBNull.Value)
+            if (!TryGetSelectedAppointmentId(out int appointmentId))
             {
-                MessageBox.Show("Pumili muna ng schedule sa listahan.");
+                MessageBox.Show("Select an appointment first.");
                 return;
             }
-            if (MessageBox.Show("Burahin ang schedule na ito?", "Confirm",
-                MessageBoxButtons.YesNo) != DialogResult.Yes) return;
-
-            int id = Convert.ToInt32(row.Cells["ID"].Value);
+            if (MessageBox.Show("Cancel this scheduled appointment?", "Confirm cancellation",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes)
+                return;
 
             try
             {
-                using var conn = Db.GetConnection();
-                using var cmd = new SqlCommand("DELETE FROM Appointments WHERE appointment_id = @id", conn);
-                cmd.Parameters.AddWithValue("@id", id);
-                conn.Open();
-                cmd.ExecuteNonQuery();
-                LoadSchedules();
+                ScheduleActionResult result = _controller.Cancel(appointmentId);
+                ShowResult(result);
+                if (result.IsSuccess) LoadSchedules();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error deleting schedule: " + ex.Message);
+                MessageBox.Show("Unable to cancel the appointment: " + ex.Message);
             }
+        }
+
+        private AppointmentScheduleRequest BuildRequest()
+        {
+            int patientId = cmbPatient.SelectedValue is null ? 0 : Convert.ToInt32(cmbPatient.SelectedValue);
+            int doctorId = cmbDoctor.SelectedValue is null ? 0 : Convert.ToInt32(cmbDoctor.SelectedValue);
+            DateTime startsAt = dtpDate.Value.Date.Add(dtpTime.Value.TimeOfDay);
+            return new AppointmentScheduleRequest(patientId, doctorId, startsAt);
+        }
+
+        private bool TryGetSelectedAppointmentId(out int appointmentId)
+        {
+            appointmentId = 0;
+            var row = dgvSchedules.CurrentRow;
+            if (row == null || !dgvSchedules.Columns.Contains("ID") ||
+                row.Cells["ID"].Value == null || row.Cells["ID"].Value == DBNull.Value)
+                return false;
+            appointmentId = Convert.ToInt32(row.Cells["ID"].Value);
+            return appointmentId > 0;
+        }
+
+        private static void ShowResult(ScheduleActionResult result)
+        {
+            MessageBox.Show(result.Message, "Appointments", MessageBoxButtons.OK,
+                result.IsSuccess ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
         }
     }
 }

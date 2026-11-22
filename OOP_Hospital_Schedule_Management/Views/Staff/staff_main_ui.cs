@@ -7,12 +7,15 @@ namespace OOP_Hospital_Schedule_Management.staff_tab
     {
         private readonly int _userId;
         private readonly string _staffName;
+        private readonly OOP_Hospital_Schedule_Management.Controllers.ScheduleController _scheduleController;
 
         public staff_main_ui(int userId, string staffName)
         {
             InitializeComponent();
             _userId = userId;
             _staffName = staffName;
+            _scheduleController = new OOP_Hospital_Schedule_Management.Controllers.ScheduleController(
+                new OOP_Hospital_Schedule_Management.Repositories.AppointmentRepository());
             Text = "Staff - " + _staffName;
         }
 
@@ -34,7 +37,7 @@ namespace OOP_Hospital_Schedule_Management.staff_tab
 
         private void scheduleBtn_Click(object sender, EventArgs e)
         {
-            using (schedules_form form = new schedules_form())
+            using (schedules_form form = new schedules_form(_userId, _scheduleController))
             {
                 form.ShowDialog(this);
             }
