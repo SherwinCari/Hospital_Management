@@ -59,6 +59,21 @@ public sealed class ScheduleController(AppointmentRepository appointments)
             : ScheduleActionResult.Failure("Only scheduled appointments can be cancelled.");
     }
 
+    public ScheduleActionResult ChangeStatus(int appointmentId, string newStatus)
+    {
+        if (appointmentId <= 0) return ScheduleActionResult.Failure("Select an appointment first.");
+        if (newStatus == "Completed")
+            return ScheduleActionResult.Failure("Completed is set automatically when the doctor saves the check-up.");
+        if (newStatus is not ("Scheduled" or "Checked-in" or "Cancelled" or "No-show"))
+            return ScheduleActionResult.Failure("Choose a valid status.");
+
+        return appointments.ChangeStatus(appointmentId, newStatus)
+            ? ScheduleActionResult.Success("Status changed to " + newStatus + ".")
+            : ScheduleActionResult.Failure(
+                "This change isn't allowed. A Scheduled appointment can be checked in (today, with a doctor), " +
+                "cancelled, or marked no-show (with a doctor). A Checked-in appointment can only be cancelled.");
+    }
+
     private static string? Validate(AppointmentScheduleRequest request, int? staffUserId)
     {
         if (request.PatientId <= 0) return "Select a patient.";

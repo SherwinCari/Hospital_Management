@@ -130,6 +130,33 @@ public sealed class AppointmentRepository
         return command.ExecuteNonQuery() > 0;
     }
 
+    public bool ChangeStatus(int appointmentId, string newStatus)
+    {
+        const string sql = @"
+            UPDATE a
+            SET status = @status,
+                checked_in_at = CASE WHEN @status = 'Checked-in' THEN GETDATE() ELSE a.checked_in_at END,
+                queue_number  = CASE WHEN @status = 'Checked-in'
+                                     THEN (SELECT ISNULL(MAX(q.queue_number), 0) + 1
+                                           FROM Appointments q
+                                           WHERE q.doctor_id = a.doctor_id
+                                             AND q.appointment_date = a.appointment_date)
+                                     ELSE a.queue_number END
+            FROM Appointments a
+            WHERE a.appointment_id = @id
+              AND ((a.status = 'Scheduled'  AND @status IN ('Checked-in', 'Cancelled', 'No-show'))
+                OR (a.status = 'Checked-in' AND @status = 'Cancelled'))
+              AND (@status NOT IN ('Checked-in', 'No-show') OR a.doctor_id IS NOT NULL)
+              AND (@status <> 'Checked-in' OR a.appointment_date = CAST(GETDATE() AS DATE))";
+
+        using var connection = Db.GetConnection();
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add("@status", SqlDbType.NVarChar, 15).Value = newStatus;
+        command.Parameters.Add("@id", SqlDbType.Int).Value = appointmentId;
+        connection.Open();
+        return command.ExecuteNonQuery() > 0;
+    }
+
     private static void EnsureSlotAvailable(
         SqlConnection connection,
         SqlTransaction transaction,

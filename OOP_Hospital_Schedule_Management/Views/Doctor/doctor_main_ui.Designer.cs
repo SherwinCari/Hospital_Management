@@ -26,130 +26,124 @@
             ((System.ComponentModel.ISupportInitialize)scheduledGrid).BeginInit();
             ((System.ComponentModel.ISupportInitialize)newPatientsGrid).BeginInit();
             SuspendLayout();
-            //
+            // 
             // welcomeLbl
-            //
+            // 
             welcomeLbl.AutoSize = true;
             welcomeLbl.BackColor = Color.Transparent;
-            welcomeLbl.Font = new Font("Airnt", 15.7499981F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            welcomeLbl.Font = new Font("Microsoft Sans Serif", 15.7499981F, FontStyle.Regular, GraphicsUnit.Point, 0);
             welcomeLbl.ForeColor = Color.Teal;
-            welcomeLbl.Location = new Point(34, 39);
-            welcomeLbl.Margin = new Padding(2, 0, 2, 0);
+            welcomeLbl.Location = new Point(49, 47);
             welcomeLbl.Name = "welcomeLbl";
-            welcomeLbl.Size = new Size(163, 21);
+            welcomeLbl.Size = new Size(168, 37);
             welcomeLbl.TabIndex = 0;
             welcomeLbl.Text = "Welcome !";
-            //
+            // 
             // dateLbl
-            //
+            // 
             dateLbl.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             dateLbl.AutoSize = true;
             dateLbl.BackColor = Color.Transparent;
             dateLbl.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point, 0);
             dateLbl.ForeColor = Color.Teal;
-            dateLbl.Location = new Point(322, 46);
-            dateLbl.Margin = new Padding(2, 0, 2, 0);
+            dateLbl.Location = new Point(444, 132);
             dateLbl.Name = "dateLbl";
-            dateLbl.Size = new Size(53, 15);
+            dateLbl.Size = new Size(86, 25);
             dateLbl.TabIndex = 1;
             dateLbl.Text = "Today is:";
-            //
+            // 
             // datePicker
-            //
+            // 
             datePicker.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             datePicker.Format = DateTimePickerFormat.Short;
-            datePicker.Location = new Point(379, 43);
-            datePicker.Margin = new Padding(2, 2, 2, 2);
+            datePicker.Location = new Point(536, 128);
             datePicker.Name = "datePicker";
-            datePicker.Size = new Size(109, 23);
+            datePicker.Size = new Size(154, 31);
             datePicker.TabIndex = 2;
             datePicker.ValueChanged += datePicker_ValueChanged;
-            //
+            // 
             // logoutBtn
-            //
+            // 
             logoutBtn.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             logoutBtn.BackColor = Color.Transparent;
             logoutBtn.ForeColor = Color.White;
             logoutBtn.Image = Properties.Resources.Button1;
-            logoutBtn.Location = new Point(492, 39);
-            logoutBtn.Margin = new Padding(2, 2, 2, 2);
+            logoutBtn.Location = new Point(704, 112);
             logoutBtn.Name = "logoutBtn";
-            logoutBtn.Size = new Size(66, 27);
+            logoutBtn.Size = new Size(94, 45);
             logoutBtn.TabIndex = 3;
             logoutBtn.Text = "Logout";
             logoutBtn.UseVisualStyleBackColor = false;
             logoutBtn.Click += logoutBtn_Click;
-            //
+            // 
             // scheduledLbl
-            //
+            // 
             scheduledLbl.AutoSize = true;
             scheduledLbl.BackColor = Color.Transparent;
             scheduledLbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             scheduledLbl.ForeColor = Color.Teal;
-            scheduledLbl.Location = new Point(34, 79);
-            scheduledLbl.Margin = new Padding(2, 0, 2, 0);
+            scheduledLbl.Location = new Point(49, 132);
             scheduledLbl.Name = "scheduledLbl";
-            scheduledLbl.Size = new Size(123, 17);
+            scheduledLbl.Size = new Size(185, 28);
             scheduledLbl.TabIndex = 4;
             scheduledLbl.Text = "Scheduled Patients";
-            //
+            // 
             // scheduledGrid
-            //
+            // 
             scheduledGrid.AllowUserToAddRows = false;
             scheduledGrid.AllowUserToDeleteRows = false;
             scheduledGrid.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             scheduledGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             scheduledGrid.BackgroundColor = Color.White;
             scheduledGrid.BorderStyle = BorderStyle.Fixed3D;
-            scheduledGrid.Location = new Point(34, 99);
-            scheduledGrid.Margin = new Padding(2, 2, 2, 2);
+            scheduledGrid.ColumnHeadersHeight = 34;
+            scheduledGrid.Location = new Point(49, 165);
             scheduledGrid.Name = "scheduledGrid";
             scheduledGrid.ReadOnly = true;
             scheduledGrid.RowHeadersVisible = false;
             scheduledGrid.RowHeadersWidth = 62;
             scheduledGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            scheduledGrid.Size = new Size(524, 220);
+            scheduledGrid.Size = new Size(749, 367);
             scheduledGrid.TabIndex = 5;
-            //
+            // 
             // newPatientsLbl
-            //
+            // 
             newPatientsLbl.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             newPatientsLbl.AutoSize = true;
             newPatientsLbl.BackColor = Color.Transparent;
             newPatientsLbl.Font = new Font("Segoe UI Semibold", 9.75F, FontStyle.Bold);
             newPatientsLbl.ForeColor = Color.Teal;
-            newPatientsLbl.Location = new Point(34, 322);
-            newPatientsLbl.Margin = new Padding(2, 0, 2, 0);
+            newPatientsLbl.Location = new Point(49, 537);
             newPatientsLbl.Name = "newPatientsLbl";
-            newPatientsLbl.Size = new Size(265, 17);
+            newPatientsLbl.Size = new Size(399, 28);
             newPatientsLbl.TabIndex = 6;
             newPatientsLbl.Text = "New Patients (no previous medical record)";
-            //
+            // 
             // newPatientsGrid
-            //
+            // 
             newPatientsGrid.AllowUserToAddRows = false;
             newPatientsGrid.AllowUserToDeleteRows = false;
             newPatientsGrid.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             newPatientsGrid.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             newPatientsGrid.BackgroundColor = Color.White;
             newPatientsGrid.BorderStyle = BorderStyle.Fixed3D;
-            newPatientsGrid.Location = new Point(34, 342);
-            newPatientsGrid.Margin = new Padding(2, 2, 2, 2);
+            newPatientsGrid.ColumnHeadersHeight = 34;
+            newPatientsGrid.Location = new Point(49, 570);
             newPatientsGrid.Name = "newPatientsGrid";
             newPatientsGrid.ReadOnly = true;
             newPatientsGrid.RowHeadersVisible = false;
             newPatientsGrid.RowHeadersWidth = 62;
             newPatientsGrid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            newPatientsGrid.Size = new Size(524, 123);
+            newPatientsGrid.Size = new Size(749, 205);
             newPatientsGrid.TabIndex = 7;
-            //
+            // 
             // doctor_main_ui
-            //
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            // 
+            AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.BG2;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(592, 499);
+            ClientSize = new Size(846, 832);
             Controls.Add(welcomeLbl);
             Controls.Add(dateLbl);
             Controls.Add(datePicker);
@@ -158,8 +152,8 @@
             Controls.Add(scheduledGrid);
             Controls.Add(newPatientsLbl);
             Controls.Add(newPatientsGrid);
+            DoubleBuffered = true;
             FormBorderStyle = FormBorderStyle.FixedSingle;
-            Margin = new Padding(2, 2, 2, 2);
             Name = "doctor_main_ui";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "Doctor";

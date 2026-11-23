@@ -25,7 +25,6 @@ namespace OOP_Hospital_Schedule_Management
             btnUpdate.Click += (s, e) => UpdateSchedule();
             btnDelete.Click += (s, e) => CancelSchedule();
             dgvSchedules.SelectionChanged += (s, e) => FillInputs();
-            cmbStatus.Enabled = false; // Lifecycle status is changed by check-in/visit workflows.
             btnDelete.Text = "Cancel";
         }
 
@@ -103,9 +102,15 @@ namespace OOP_Hospital_Schedule_Management
                 return;
             }
 
+            // if the Status box was changed, change the status; otherwise reschedule as before
+            string currentStatus = dgvSchedules.CurrentRow?.Cells["Status"].Value?.ToString() ?? "";
+            string newStatus = cmbStatus.SelectedItem?.ToString() ?? currentStatus;
+
             try
             {
-                ScheduleActionResult result = _controller.Reschedule(appointmentId, BuildRequest());
+                ScheduleActionResult result = newStatus != currentStatus
+                    ? _controller.ChangeStatus(appointmentId, newStatus)
+                    : _controller.Reschedule(appointmentId, BuildRequest());
                 ShowResult(result);
                 if (result.IsSuccess) LoadSchedules();
             }
