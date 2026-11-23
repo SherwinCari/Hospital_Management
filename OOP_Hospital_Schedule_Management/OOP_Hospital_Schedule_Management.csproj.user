@@ -16,6 +16,9 @@
     <Compile Update="record_history_form.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="schedules_form.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="staff_tab\schedules_form.cs">
       <SubType>Form</SubType>
     </Compile>
